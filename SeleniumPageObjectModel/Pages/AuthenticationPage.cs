@@ -11,7 +11,7 @@ namespace SeleniumPageObjectModel.Pages
         private IWebElement EmailTextBox => _Driver.FindElement(By.CssSelector(".form-group>.is_required#email_create"));
         private IWebElement SubmitButton => _Driver.FindElement(By.CssSelector(".form_content >.submit>#SubmitCreate"));
         private IWebElement ErroMessage =>  _Driver.FindElement(By.CssSelector("#create_account_error"));
-
+        private string _ErrorMessage = "";
         public AuthenticationPage(IWebDriver driver)
         {
             this._Driver = driver;
@@ -25,7 +25,7 @@ namespace SeleniumPageObjectModel.Pages
             // Pause(_Driver, 4000);
             Thread.Sleep(4000);
 
-            if (ErroMessage.Text.Length > 0)
+            if (_ErrorMessage.Length > 0)
             {
                 return null;
             }
