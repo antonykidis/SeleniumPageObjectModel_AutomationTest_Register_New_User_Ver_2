@@ -9,6 +9,8 @@ namespace SeleniumPageObjectModel
     [TestClass]
     public class UnitTest1 : BaseClass
     {
+
+
         string _FirstName = "Chupa";
         string _Lastname = "Kabra";
         //  string _Email = "chupa10@gmail.com"; 
@@ -33,30 +35,40 @@ namespace SeleniumPageObjectModel
             //Check if user already exists in the database
             if (null == AuthPage.Login_ToCreateAnAccountPage(_email_fromConfig))
             {
-                //If true The user Exists in database!
-                //1.show Error message(optional)
+                //If true, user Exists in database!
+                // Error message is shown to the user.
                 //2.Manipulate Email
                 _email_fromConfig = rnd.Next(1, 10000).ToString() + _email_fromConfig;
                 //3.Start again with new Email :-)
                 CreateAccountPage CreateAccPage = AuthPage.Login_ToCreateAnAccountPage2(_email_fromConfig);
+                if (CreateAccPage == null) { throw new Exception("This generated Email was failed. Please generate new unique Email address, and try again"); }
                 MyAccountPage MyAccPage = CreateAccPage.RegisterNewUser_And_GoToMyAccountPage(_FirstName, _Lastname, _email_fromConfig, _Password, _Day, _Month, _Year, _Company, _Address, _City, _State, _AddInfo, _MobilePhone); //provide your Unregisterd user
                 MyAccountLoggedOffPage MyAccloggedOff = MyAccPage.LogOff_ToAccLoggedOff();
                 MyAccPage = MyAccloggedOff.Login_WithExistingUser(_email_fromConfig, _Password); //verification
 
                 //Assert here
                 Assert.IsTrue(MyAccPage.Username.Text.Equals(_FirstName + " " + _Lastname));
+                Assert.AreEqual("http://automationpractice.com/index.php?controller=my-account", _Driver.Url.ToString());
+
             }
             else
             {
-                //Works only if you start with fresh unique email(In web.config)
-                CreateAccountPage CreateAccPage = AuthPage.Login_ToCreateAnAccountPage2(_email_fromConfig);
-                MyAccountPage MyAccPage = CreateAccPage.RegisterNewUser_And_GoToMyAccountPage(_FirstName, _Lastname, _email_fromConfig, _Password, _Day, _Month, _Year, _Company, _Address, _City, _State, _AddInfo, _MobilePhone); //provide your Unregisterd user
-
-                MyAccountLoggedOffPage MyAccloggedOff = MyAccPage.LogOff_ToAccLoggedOff();
-                MyAccPage = MyAccloggedOff.Login_WithExistingUser(_email_fromConfig, _Password); //verification
-
-                //Assert here
-                Assert.IsTrue(MyAccPage.Username.Text.Equals(_FirstName + " " + _Lastname));
+                //if user reaches the account-creation.htm change the flow of the logic
+                if (_Driver.Url == "http://automationpractice.com/index.php?controller=authentication&back=my-account#account-creation")
+                {
+                    CreateAccountPage CreateAccPage = new CreateAccountPage(_Driver);
+                    MyAccountPage MyAccPage = CreateAccPage.RegisterNewUser_And_GoToMyAccountPage(_FirstName, _Lastname, _email_fromConfig, _Password, _Day, _Month, _Year, _Company, _Address, _City, _State, _AddInfo, _MobilePhone); //provide your Unregisterd user
+                    MyAccountLoggedOffPage MyAccloggedOff = MyAccPage.LogOff_ToAccLoggedOff();
+                    MyAccPage = MyAccloggedOff.Login_WithExistingUser(_email_fromConfig, _Password); //verification
+                    //Assert here                                                                               
+                    Assert.IsTrue(MyAccPage.Username.Text.Equals(_FirstName + " " + _Lastname));
+                    Assert.AreEqual("http://automationpractice.com/index.php?controller=my-account", _Driver.Url.ToString());
+                }
+                else
+                {
+                    throw new Exception("account-creation.html does not exists");
+                }
+       
             }
 
         }

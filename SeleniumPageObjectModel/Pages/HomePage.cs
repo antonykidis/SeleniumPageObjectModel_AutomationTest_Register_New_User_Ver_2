@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using SeleniumPageObjectModel.Base;
+using System.Threading;
 
 namespace SeleniumPageObjectModel.Pages
 {
@@ -20,6 +21,7 @@ namespace SeleniumPageObjectModel.Pages
         public AuthenticationPage SignIn_ToAuthPage()
         {
             LoginButton.Click();
+            Thread.Sleep(2000);
             return new AuthenticationPage(_Driver);
         }
 

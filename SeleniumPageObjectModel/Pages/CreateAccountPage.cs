@@ -132,7 +132,7 @@ namespace SeleniumPageObjectModel.Pages
                     break;
             }
 
-             Thread.Sleep(4000);
+             Thread.Sleep(2000);
 
             MR_GenderRadioBtn.Click();
             Firstname_TextBox.SendKeys(firstname);
